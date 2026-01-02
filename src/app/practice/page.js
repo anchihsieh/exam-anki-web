@@ -16,7 +16,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 
-const DEBUG_MODE = true;
+const DEBUG_MODE = false;
 
 /** ---------- UI styles ---------- */
 const pageStyle = {
