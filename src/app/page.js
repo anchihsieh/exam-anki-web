@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 
 const USERS = [
-  { user_id: "chiao", name: "Chiao" },
-  { user_id: "ashley", name: "Ashley" },
+  { user_id: "chiao", name: "品蕎" },
+  { user_id: "ashley", name: "妍欣" },
 
   // ✅ 測試用（不會影響學生權重）
   { user_id: "tester", name: "Tester (for dev)" },
