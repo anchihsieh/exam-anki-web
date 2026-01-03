@@ -139,22 +139,26 @@ function calcWeight(q, stat) {
   const wrongRate = attempts > 0 ? wrong / attempts : 0;
 
   const familiarity = String(stat?.familiarity || "unknown");
-  const needsPractice = familiarity === "needs_practice" ? 1 : 0;
+  const needsPractice = familiarity === "needs_practice";
+  const isMastered = familiarity === "mastered";
 
   const teacherPriority = Number(q?.teacher_priority || 0);
   const forceRepeat = !!q?.force_repeat;
 
-  // ✅ 中等強度：會明顯提高錯題/needs_practice/priority 的機率
-  const w =
+  let w =
     1 +
     4 * wrongRate +
-    3 * needsPractice +
+    (needsPractice ? 3 : 0) +
     2 * teacherPriority +
     (forceRepeat ? 2 : 0) +
-    Math.random() * 0.5;
+    Math.random() * 0.8;
+
+  // ✅ mastered：下回「大幅降低」但不歸零（仍可能抽到）
+  if (isMastered) w *= 0.25;
 
   return w;
 }
+
 
 /** ---------- Main ---------- */
 export default function PracticePage() {
@@ -315,7 +319,11 @@ export default function PracticePage() {
 
       // 4) 其餘用權重抽滿 10 題（不重複）
       const forcedIds = new Set(forced.map((q) => q.q_id));
-      const remainingPool = candidates.filter((q) => !forcedIds.has(q.q_id));
+      const remainingPool = candidates.filter((q) => {
+        if (forcedIds.has(q.q_id)) return false;
+        const s = statsMap.get(String(q.q_id));
+        return String(s?.familiarity || "unknown") !== "mastered";
+      });
 
       const need = Math.max(0, 10 - forced.length);
       const weightedPicked = weightedSampleNoReplace(remainingPool, need, (q) =>
@@ -568,7 +576,9 @@ export default function PracticePage() {
 
   if (phase === "summary") {
     const tfRecords = records.filter((r) => r.type === "TF");
-    const accPct = tfRecords.length ? Math.round((correctCount / tfRecords.length) * 100) : 0;
+    const tfCorrect = tfRecords.filter((r) => r.is_correct).length;
+    const tfTotal = tfRecords.length;
+    const accPct = tfTotal ? Math.round((tfCorrect / tfTotal) * 100) : 0;
     const slowTop3 = topicStats.slice(0, 3);
 
     return (
@@ -578,7 +588,7 @@ export default function PracticePage() {
         <div style={{ display: "grid", gap: 12, marginTop: 14 }}>
           <div style={cardStyle}>總耗時 👀：{totalSec} 秒</div>
           <div style={cardStyle}>
-            問答正確率 🥳：{correctCount} / {tfRecords.length}（{accPct}%）
+            問答正確率 🥳：{tfCorrect} / {tfTotal}（{accPct}%）
           </div>
         </div>
 
@@ -734,6 +744,9 @@ export default function PracticePage() {
               </button>
               <button style={btnStyle} onClick={() => handleFamiliarity("needs_practice")}>
                 🔁 需要重複練習（下一題）
+              </button>
+              <button style={btnStyle} onClick={() => handleFamiliarity("mastered")}>
+                🤩 已掌握（練過 3 次且已熟悉）
               </button>
             </div>
           </div>
