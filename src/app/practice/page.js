@@ -670,25 +670,36 @@ export default function PracticePage() {
       </div>
 
       <div style={{ ...cardStyle, marginTop: 12 }}>
-        <div style={{ fontSize: 22, fontWeight: 900, lineHeight: 1.35 }}>{currentQ.statement}</div>
+        <div style={{ fontSize: 22, fontWeight: 900, lineHeight: 1.35 }}>
+          {currentQ.statement}
+        </div>
 
-  {/* ✅ 題目圖片（有 URL 才顯示） */}
-  {safeStr(currentQ.question_image_url) && (
-    <img
-      src={safeStr(currentQ.question_image_url)}
-      alt="question"
-      style={{
-        marginTop: 12,
-        width: "100%",
-        maxHeight: 420,
-        objectFit: "contain",
-        borderRadius: 12,
-        border: "1px solid #eee",
-        background: "#fff",
-      }}
-    />
-  )}
-</div>
+        {/* ✅ 題目圖片（有 URL 才顯示） */}
+        {safeStr(currentQ.question_image_url) && (
+          <img
+            src={safeStr(currentQ.question_image_url)}
+            alt="question"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            style={{
+              marginTop: 12,
+              width: "100%",
+              maxHeight: 420,
+              objectFit: "contain",
+              borderRadius: 12,
+              border: "1px solid #eee",
+              background: "#fff",
+              display: "block",
+            }}
+            onError={(e) => {
+              console.log("❌ image load failed:", safeStr(currentQ.question_image_url));
+              // 可選：讓壞圖不要佔空間
+              e.currentTarget.style.display = "none";
+            }}
+          />
+        )}
+      </div>
+
 
       </div>
 
@@ -752,6 +763,8 @@ export default function PracticePage() {
   <img
     src={safeStr(currentQ.explain_image_url)}
     alt="explain"
+    loading="lazy"
+    referrerPolicy="no-referrer"
     style={{
       marginTop: 12,
       width: "100%",
@@ -760,9 +773,15 @@ export default function PracticePage() {
       borderRadius: 12,
       border: "1px solid #eee",
       background: "#fff",
+      display: "block",
+    }}
+    onError={(e) => {
+      console.log("❌ explain image load failed:", safeStr(currentQ.explain_image_url));
+      e.currentTarget.style.display = "none";
     }}
   />
 )}
+
 
 
             {lastRec && (
