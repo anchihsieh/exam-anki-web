@@ -671,6 +671,25 @@ export default function PracticePage() {
 
       <div style={{ ...cardStyle, marginTop: 12 }}>
         <div style={{ fontSize: 22, fontWeight: 900, lineHeight: 1.35 }}>{currentQ.statement}</div>
+
+  {/* ✅ 題目圖片（有 URL 才顯示） */}
+  {safeStr(currentQ.question_image_url) && (
+    <img
+      src={safeStr(currentQ.question_image_url)}
+      alt="question"
+      style={{
+        marginTop: 12,
+        width: "100%",
+        maxHeight: 420,
+        objectFit: "contain",
+        borderRadius: 12,
+        border: "1px solid #eee",
+        background: "#fff",
+      }}
+    />
+  )}
+</div>
+
       </div>
 
       {phase === "answer" ? (
@@ -727,6 +746,24 @@ export default function PracticePage() {
                 {currentQ.explanation}
               </div>
             )}
+
+{/* ✅ 詳解圖片（有 URL 才顯示） */}
+{safeStr(currentQ.explain_image_url) && (
+  <img
+    src={safeStr(currentQ.explain_image_url)}
+    alt="explain"
+    style={{
+      marginTop: 12,
+      width: "100%",
+      maxHeight: 520,
+      objectFit: "contain",
+      borderRadius: 12,
+      border: "1px solid #eee",
+      background: "#fff",
+    }}
+  />
+)}
+
 
             {lastRec && (
               <div style={{ marginTop: 10, fontSize: 13, opacity: 0.8, lineHeight: 1.6 }}>
