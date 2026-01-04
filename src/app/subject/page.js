@@ -7,6 +7,7 @@ const subjects = [
   { key: "chemistry", label: "化學 Chemistry" },
   { key: "biology", label: "生物 Biology" },
   { key: "earth", label: "地科 Earth" },
+  { key: "english", label: "英文 English" },
 ];
 
 export default function SubjectPage() {
